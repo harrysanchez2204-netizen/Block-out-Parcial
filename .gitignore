@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.idea/
+.vscode/
+*.log
+# Los resultados del experimento se versionan solo si se citan en el informe:
+results/*.png
+!results/.gitkeep
