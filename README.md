@@ -4,7 +4,11 @@ Proyecto de Visión por Computador (Ingeniería Electrónica, UTP, 2026-II). Vis
 inspirada en Blockout: la escena vive en coordenadas 3D del mundo y se proyecta a la pantalla con una
 matriz de cámara implementada por el equipo (λ·[u v 1]ᵀ = K [R|t] M [X Y Z 1]ᵀ).
 
-**Estado:** E1 — esqueleto del repositorio. Ver `docs/SEGUIMIENTO.md`.
+**Estado:** E2 — contrato entre módulos acordado (`docs/INTERFACES.md`). Ver `docs/SEGUIMIENTO.md`.
+
+Antes de escribir código en `scene/`, `projection/` o `app/`, leer **`docs/INTERFACES.md`**: ahí están los
+sistemas de coordenadas, las estructuras compartidas, las funciones públicas de cada módulo y el ejemplo
+numérico que los tres deben reproducir (`tests/fixtures/shared_example.json`).
 
 ## Equipo y roles
 

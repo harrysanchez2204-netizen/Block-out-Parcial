@@ -13,4 +13,5 @@ Cierra: #
 - [ ] No cambia interfaces compartidas (`core/types.py`, `docs/INTERFACES.md`) — o, si cambia, lo aprobaron los tres
 - [ ] No usa cámara de un motor gráfico (la proyección es propia)
 - [ ] Si usé IA, lo anoté en `AI_USAGE.md` y entiendo el código
-- [ ] Revisor asignado según la rotación: A→B, B→C, C→A (este PR lo revisa: @ )
+- [ ] Revisor asignado según la rotación autor → revisor: A→C, B→A, C→B (este PR lo revisa: @ )
+      Si el PR toca `core/types.py` o `docs/INTERFACES.md`, lo aprueban **los tres**.
