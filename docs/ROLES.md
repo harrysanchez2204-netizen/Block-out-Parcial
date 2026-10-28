@@ -5,7 +5,7 @@
 | Rol | Responsable | Usuario Git | Carpeta | Salidas |
 | --- | --- | --- | --- | --- |
 | A · Escena y geometría | Emmanuel Parra Ocampo | @ZXemmp | `src/blockout/scene/` | Geometría 3D válida y poses en el sistema acordado |
-| B · Cámara y proyección | Juan Sebastian Atis Chaves | @ | `src/blockout/projection/`, `experiments/` | Geometría 2D proyectada y verificación numérica |
+| B · Cámara y proyección | Juan Sebastian Atis Chaves | @juanatis | `src/blockout/projection/`, `experiments/` | Geometría 2D proyectada y verificación numérica |
 | C · Interfaz y animación | Harrinson Quitumbo Sanchez | @harrysanchez2204-netizen | `src/blockout/app/` | Aplicación interactiva que usa los módulos compartidos |
 
 **Coordinador de seguimiento:** _completar_ (además de su rol técnico). Mantiene el plan, el cronograma y el
