@@ -10,9 +10,9 @@ matriz de cámara implementada por el equipo (λ·[u v 1]ᵀ = K [R|t] M [X Y Z 
 
 | Rol | Responsable | Usuario Git |
 | --- | --- | --- |
-| A · Escena y geometría | _por completar_ | _@usuario_ |
-| B · Cámara y proyección | _por completar_ | _@usuario_ |
-| C · Interfaz y animación | _por completar_ | _@usuario_ |
+| A · Escena y geometría | Emmanuel Parra Ocampo | @ZXemmp |
+| B · Cámara y proyección | Juan Sebastián Atis Chaves | @usuario_ |
+| C · Interfaz y animación | Harrinson Quitumbo Sanchez | @harrysanchez2204-netizen |
 
 Coordinador de seguimiento: _por completar_. Detalles en `docs/ROLES.md`.
 
