@@ -41,4 +41,4 @@ aprueban los tres.
 - [ ] Docente y compañeros con acceso al repositorio
 - [ ] Protección de la rama `main`: exigir PR, 1 aprobación, estado `ci` en verde, resolver conversaciones
 - [ ] Tablero con columnas: Pendiente · En curso · En revisión · Terminada
-- [ ] Cada integrante clonó, creó una rama y abrió un PR de prueba
+- [ ] Cada integrante clonó, creó una rama y abrió un PR de prueba (C: PR #1 ✔)

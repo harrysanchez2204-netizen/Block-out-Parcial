@@ -1,0 +1,343 @@
+{
+  "_acerca_de": "Ejemplo compartido del contrato (E2). Lo reproducen los tres modulos. Ver docs/INTERFACES.md seccion 7.",
+  "_convenciones": {
+    "mundo": "mano derecha, X derecha, Y al fondo, Z arriba; piso en Z=0; unidad = 1 cubo",
+    "camara": "OpenCV: x derecha, y abajo, z adelante",
+    "imagen": "u derecha, v abajo, origen arriba-izquierda, pixeles",
+    "cadena": "lambda*[u v 1]^T = K [R|t] M [X Y Z 1]^T, lambda = z_cam"
+  },
+  "tolerancia": 1e-09,
+  "camara": {
+    "width": 640,
+    "height": 480,
+    "fov_deg": 60.0,
+    "near": 0.1,
+    "eye": [
+      0.0,
+      -10.0,
+      0.0
+    ],
+    "target": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "up": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "f": 554.2562584220408,
+    "K": [
+      [
+        554.2562584220408,
+        0.0,
+        320.0
+      ],
+      [
+        0.0,
+        554.2562584220408,
+        240.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "R": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "t": [
+      0.0,
+      0.0,
+      10.0
+    ],
+    "centro_en_el_mundo": [
+      0.0,
+      -10.0,
+      0.0
+    ]
+  },
+  "puntos": [
+    {
+      "nombre": "origen_del_mundo",
+      "punto_mundo": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "punto_camara": [
+        0.0,
+        0.0,
+        10.0
+      ],
+      "z_cam": 10.0,
+      "visible": true,
+      "uv": [
+        320.0,
+        240.0
+      ],
+      "por_que": "en el eje optico: cae en el centro de la imagen"
+    },
+    {
+      "nombre": "un_cubo_en_X",
+      "punto_mundo": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "punto_camara": [
+        1.0,
+        0.0,
+        10.0
+      ],
+      "z_cam": 10.0,
+      "visible": true,
+      "uv": [
+        375.4256258422041,
+        240.0
+      ],
+      "por_que": "u = cx + f*1/10"
+    },
+    {
+      "nombre": "un_cubo_en_Z",
+      "punto_mundo": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "punto_camara": [
+        0.0,
+        -1.0,
+        10.0
+      ],
+      "z_cam": 10.0,
+      "visible": true,
+      "uv": [
+        320.0,
+        184.57437415779592
+      ],
+      "por_que": "v = cy - f*1/10: subir en el mundo baja v"
+    },
+    {
+      "nombre": "un_cubo_en_Y",
+      "punto_mundo": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "punto_camara": [
+        0.0,
+        0.0,
+        11.0
+      ],
+      "z_cam": 11.0,
+      "visible": true,
+      "uv": [
+        320.0,
+        240.0
+      ],
+      "por_que": "mismo pixel que el origen pero z_cam mayor"
+    },
+    {
+      "nombre": "detras_de_la_camara",
+      "punto_mundo": [
+        0.0,
+        -12.0,
+        0.0
+      ],
+      "punto_camara": [
+        0.0,
+        0.0,
+        -2.0
+      ],
+      "z_cam": -2.0,
+      "visible": false,
+      "uv": null,
+      "por_que": "z_cam < 0: no visible"
+    }
+  ],
+  "pieza": {
+    "nombre": "L",
+    "cells": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ]
+    ],
+    "pivot_cell": 0,
+    "pivot_local": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "pose": {
+      "rotation": [
+        [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "position": [
+        2.5,
+        2.5,
+        0.5
+      ]
+    },
+    "M": [
+      [
+        0.0,
+        -1.0,
+        0.0,
+        3.0
+      ],
+      [
+        1.0,
+        0.0,
+        0.0,
+        2.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "comprobacion": "M @ [pivot_local,1] == position: el pivote no se mueve al rotar",
+    "centros_de_cubos": [
+      {
+        "centro_local": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "centro_mundo": [
+          2.5,
+          2.5,
+          0.5
+        ],
+        "punto_camara": [
+          2.5,
+          -0.5,
+          12.5
+        ],
+        "uv": [
+          430.8512516844082,
+          217.82974966311838
+        ]
+      },
+      {
+        "centro_local": [
+          1.5,
+          0.5,
+          0.5
+        ],
+        "centro_mundo": [
+          2.5,
+          3.5,
+          0.5
+        ],
+        "punto_camara": [
+          2.5,
+          -0.5,
+          13.5
+        ],
+        "uv": [
+          422.6400478559335,
+          219.4719904288133
+        ]
+      },
+      {
+        "centro_local": [
+          2.5,
+          0.5,
+          0.5
+        ],
+        "centro_mundo": [
+          2.5,
+          4.5,
+          0.5
+        ],
+        "punto_camara": [
+          2.5,
+          -0.5,
+          14.5
+        ],
+        "uv": [
+          415.56142386586913,
+          220.8877152268262
+        ]
+      },
+      {
+        "centro_local": [
+          0.5,
+          1.5,
+          0.5
+        ],
+        "centro_mundo": [
+          1.5,
+          2.5,
+          0.5
+        ],
+        "punto_camara": [
+          1.5,
+          -0.5,
+          12.5
+        ],
+        "uv": [
+          386.51075101064487,
+          217.82974966311838
+        ]
+      }
+    ]
+  }
+}
