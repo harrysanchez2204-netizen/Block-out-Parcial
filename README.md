@@ -12,7 +12,7 @@ matriz de cámara implementada por el equipo (λ·[u v 1]ᵀ = K [R|t] M [X Y Z 
 | --- | --- | --- |
 | A · Escena y geometría | Emmanuel Parra Ocampo | @ZXemmp |
 | B · Cámara y proyección | Juan Sebastián Atis Chaves | @usuario_ |
-| C · Interfaz y animación | Harrinson Quitumbo Sanchez | @harrysanchez2204-netizen |
+| C · Interfaz y animación | Harrison Quitumbo Sanchez | harrysanchez2204@gmail.com |
 
 Coordinador de seguimiento: _por completar_. Detalles en `docs/ROLES.md`.
 
