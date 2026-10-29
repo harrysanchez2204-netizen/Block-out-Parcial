@@ -37,6 +37,25 @@ def rot_axis_exact(axis: int, quarter_turns: int) -> np.ndarray:
     return np.array(m, dtype=float)
 
 
+def rot_axis_angle(axis_vec, angle_rad: float) -> np.ndarray:
+    """(eje cualquiera (3,), ángulo en radianes) -> rotación (3,3). Fórmula de Rodrigues.
+
+    Con a el eje unitario y [a]ₓ su matriz de producto cruz ([a]ₓ·v = a × v):
+        R = I + sen(θ)·[a]ₓ + (1 − cos(θ))·[a]ₓ²
+    Es para rotaciones CONTINUAS (la animación de victoria, E9). Las piezas que maneja el usuario
+    giran con rot_axis_exact, que no acumula error.
+    """
+    a = np.asarray(axis_vec, dtype=float)
+    n = np.linalg.norm(a)
+    if n < 1e-12:
+        raise ValueError("el eje de rotación no puede ser el vector cero")
+    a = a / n
+    Kx = np.array([[0.0, -a[2], a[1]],
+                   [a[2], 0.0, -a[0]],
+                   [-a[1], a[0], 0.0]])
+    return np.eye(3) + np.sin(angle_rad) * Kx + (1.0 - np.cos(angle_rad)) * (Kx @ Kx)
+
+
 def orthonormalize(R: np.ndarray) -> np.ndarray:
     """(3,3) casi-rotación -> la rotación propia más cercana (SVD, det = +1).
 
@@ -50,6 +69,25 @@ def orthonormalize(R: np.ndarray) -> np.ndarray:
         U = U.copy()
         U[:, -1] *= -1
         Q = U @ Vt
+    return Q
+
+
+def clean_rotation(R: np.ndarray, snap_tol: float = 1e-9) -> np.ndarray:
+    """(3,3) -> rotación propia; si está a < snap_tol de una matriz entera, devuelve esa exacta.
+
+    Por qué los dos pasos:
+      1. `orthonormalize` (SVD) garantiza RᵀR = I y det = +1: la pieza no se deforma (rigidez).
+      2. La SVD la calcula la librería de álgebra lineal instalada (OpenBLAS, MKL…), que no es la
+         misma en Linux y en Windows. Aunque en una máquina devuelva una rotación de 90° exacta, en
+         otra podría salir 0.9999999999999998. Si la matriz está a menos de `snap_tol` de una con
+         entradas en {-1, 0, 1}, se toma esa: así las rotaciones de pieza siguen exactas y los
+         vértices siguen cayendo en enteros en cualquier sistema operativo.
+    Las rotaciones continuas de la animación (E9) no están cerca de una entera y no se redondean.
+    """
+    Q = orthonormalize(np.asarray(R, dtype=float))
+    Qi = np.rint(Q)
+    if np.abs(Q - Qi).max() < snap_tol:
+        return Qi + 0.0                    # + 0.0 convierte un posible −0.0 en 0.0
     return Q
 
 
