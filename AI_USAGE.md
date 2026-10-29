@@ -16,6 +16,8 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | --- | --- | --- | --- |
 | 2026-10-27 | Esqueleto del repositorio, CI, plantillas y documentos base (E1) | Claude | _completar_ |
 | 2026-10-28 | Borrador de E3: `scene/` (M, malla local, contenedor, `get_geometry`), `projection/` (K, `look_at`, recorte, `project`), `app/` (ventana, bucle, dibujo) y pruebas | Claude | PR de A, B y C de E3: _completar_ |
+| 2026-10-28 | Borrador de E5: `OrbitCamera`, `clip_polygon_near`, descarte de caras traseras, algoritmo del pintor y pruebas | Claude | PR #8 |
+| 2026-10-29 | Borrador de E7: `homography.py`, experimento, pruebas y sección 2 de `docs/INFORME.md` | Claude | PR de E7: pendiente |
 
 ## Cómo se verificó el código y las afirmaciones matemáticas
 
@@ -36,3 +38,8 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | --- | --- | --- | --- |
 | 2026-10-28 | Con la vista inicial de la guía (objetivo a `z = 4`, distancia 20) el borde superior del contenedor salía en `v < 0` y se montaba sobre el HUD | Rango de `v` de los segmentos proyectados (−8.9) y la captura | Objetivo en el centro real del contenedor `(2.5, 2.5, 5)` y distancia 22: `v ∈ [71, 655]` |
 | 2026-10-28 | El borrador de la guía para el contenedor repetía segmentos (las columnas de esquina coincidían con líneas de pared) | Conteo de aristas | Contenedor como conjunto de segmentos unitarios: cada uno aparece una sola vez |
+| 2026-10-28 | Una prueba de E5 ponía la cámara justo encima del cubo, mirando recto hacia abajo: caso degenerado de `look_at` | La prueba lanzó `ValueError` | Se corrió el ojo a `(0.6, 0.4, 6)` |
+| 2026-10-29 | La primera vista 2 tenía el azimut opuesto a la vista 1 y `H21` presentaba ceros estructurales por simetría | Revisión de la matriz | Se ajustó el azimut de la vista 2 a 145° |
+| 2026-10-29 | Los primeros puntos interiores tenían un margen de colinealidad de 9.6 px | Medición del margen | Se eligieron `(1, 3)` y `(4, 2.5)`, alcanzando 28.4 px |
+| 2026-10-29 | Los vértices de las piezas producían errores de miles de píxeles | Revisión de resultados | Se explicó el efecto de los rayos casi paralelos al piso y se agregó la mediana |
+| 2026-10-29 | Las cifras de error del orden de `1e-13` variaban entre plataformas | Revisión de portabilidad | Se utilizaron valores `< 1e-9` en las tablas |

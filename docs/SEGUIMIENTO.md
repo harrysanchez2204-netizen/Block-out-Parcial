@@ -13,6 +13,7 @@ enlaces a commits y PR.
   y `feat/e3-app` (C). A y B son independientes; C se fusiona después de ambos. Evidencia:
   `docs/img/e3_primera_integracion.png`.
 - **Pendiente:** PR de prueba de A y B (T01); protección de la rama `main` y tablero.
+- **En curso (E7, rol B):** Experimento de homografía del piso entre dos vistas, incluyendo derivación matemática, verificación numérica y análisis del paralaje. Los resultados y su interpretación se documentan en `docs/INFORME.md`, sección 2. Rama de trabajo: `feat/e7-homografia`. Pendiente de pruebas finales y revisión mediante PR.
 - **Bloqueos:** _completar_
 - **Decisiones:**
   - Mundo de mano derecha con `Z` hacia arriba y piso en `Z = 0`; unidad = 1 cubo.
