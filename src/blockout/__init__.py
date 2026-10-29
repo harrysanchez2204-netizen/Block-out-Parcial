@@ -1,6 +1,3 @@
-"""Módulo A — escena y geometría. Solo importa de blockout.core (nunca de projection ni app)."""
-from blockout.scene.scene import apply_action, create_scene, get_geometry, occupied_cells
-from blockout.scene.transforms import model_matrix, rot_axis_angle, rot_axis_exact, transform_points
+"""Blockout desde una cámara móvil — Visión por Computador, UTP 2026-II."""
 
-__all__ = ["create_scene", "apply_action", "get_geometry", "occupied_cells",
-           "model_matrix", "rot_axis_exact", "rot_axis_angle", "transform_points"]
+__version__ = "0.1.0"
