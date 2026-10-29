@@ -1,8 +1,5 @@
-"""Punto de entrada: python -m blockout [--demo]. Se completa en la etapa E3."""
+"""Punto de entrada: python -m blockout [--demo]."""
+from blockout.app.main import main
 
-
-def main() -> None:
-    print("Blockout: esqueleto del proyecto (E1). La aplicación se construye desde E3.")
-
-
-main()
+if __name__ == "__main__":
+    main()
