@@ -6,49 +6,159 @@ de este archivo cambia poses: la única puerta es `apply_action`, que devuelve u
 """
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 
 from blockout.core.types import Action, Container, Geometry3D, Mesh3D, Piece, Pose, Scene
 from blockout.scene.pieces import CATALOG, local_mesh
-from blockout.scene.transforms import model_matrix, transform_points
+from blockout.scene.transforms import clean_rotation, model_matrix, rot_axis_exact, transform_points
 
 CONTAINER_COLOR = (120, 130, 150)
+STATUSES = ("playing", "victory")
 
+
+# --------------------------------------------------------------------------- celdas ocupadas
+
+def occupied_cells(piece: Piece) -> np.ndarray:
+    """Pieza -> (n,3) índices enteros de las celdas del CONTENEDOR que ocupa en el mundo.
+
+    El centro del cubo local (i,j,k) es (i,j,k) + 0.5. Se lleva al mundo con M y se le resta 0.5:
+    si la pose está alineada a la rejilla, el resultado es entero. Se redondea para absorber el
+    error de punto flotante (del orden de 1e-15), nunca para "arreglar" una pose desalineada.
+    """
+    centers = np.asarray(piece.cells, dtype=float) + 0.5
+    return np.rint(transform_points(model_matrix(piece), centers) - 0.5).astype(int)
+
+
+def _inside(piece: Piece, size) -> bool:
+    """True si todas las celdas de la pieza están dentro de [0, W) × [0, D) × [0, H)."""
+    c = occupied_cells(piece)
+    return bool((c >= 0).all() and (c < np.asarray(size)).all())
+
+
+# ------------------------------------------------------------------------------- creación
 
 def create_scene(config: dict | None = None) -> Scene:
     """config opcional {size, pieces} -> Scene inicial. Determinista: mismo config, misma escena.
 
-    En E3 cada pieza arranca sin rotar y con su pivote cerca del techo del contenedor, como en
-    Blockout. El pivote es el centro de un cubo (coordenadas x.5), de modo que con rotación
-    identidad todos los cubos caen en celdas enteras del contenedor.
-    Un nombre de pieza que no está en CATALOG es un error de programación: se lanza ValueError al
-    arrancar, en vez de abrir la aplicación con una pieza de menos sin avisar.
+    Disposición inicial: las piezas se ubican sin rotar en "casillas" del contenedor, dos por nivel
+    (franjas Y ∈ [0,2) e Y ∈ [3,5)) y niveles que bajan de 3 en 3 desde el techo. Ninguna pieza del
+    catálogo mide más de 3×2×2 sin rotar, así que no se solapan ni se salen.
+    La posición guardada es la del PIVOTE: esquina mínima de la casilla + (celda pivote − celda
+    mínima) + 0.5, es decir, el centro del cubo pivote en el mundo.
+    Un nombre desconocido o una escena en la que las piezas no caben es un error de configuración:
+    se lanza ValueError al arrancar en vez de abrir la aplicación con piezas fuera del contenedor.
     """
     config = config or {}
     size = tuple(int(s) for s in config.get("size", (5, 5, 10)))
     names = list(config.get("pieces", list(CATALOG)))
+    W, D, H = size
 
     pieces = []
     for n, name in enumerate(names):
         if name not in CATALOG:
             raise ValueError(f"pieza desconocida en config: {name!r}")
         cells, pivot, color = CATALOG[name]
-        position = np.array([1.5, 1.5, size[2] - 1.5 - 2.0 * n])   # sin solapes entre piezas
-        pieces.append(Piece(id=n, name=name, cells=tuple(tuple(c) for c in cells),
-                            pivot_cell=pivot, pose=Pose(np.eye(3), position), color=color))
+        cells_arr = np.asarray(cells)
+        slot = np.array([max(0, (W - 3) // 2), 3 * (n % 2), H - 2 - 3 * (n // 2)])
+        position = slot + (cells_arr[pivot] - cells_arr.min(axis=0)) + 0.5
+        piece = Piece(id=n, name=name, cells=tuple(tuple(c) for c in cells), pivot_cell=pivot,
+                      pose=Pose(np.eye(3), position.astype(float)), color=color)
+        if not _inside(piece, size):
+            raise ValueError(f"la pieza {name!r} no cabe en un contenedor {size}")
+        pieces.append(piece)
     return Scene(container=Container(size=size), pieces=tuple(pieces), active=0)
 
 
+# -------------------------------------------------------------------------------- acciones
+
+def _with_pose(scene: Scene, idx: int, pose: Pose) -> Scene:
+    """Escena nueva con la pose de la pieza `idx` reemplazada (las demás se comparten, no se copian)."""
+    pieces = list(scene.pieces)
+    pieces[idx] = replace(pieces[idx], pose=pose)
+    return replace(scene, pieces=tuple(pieces))
+
+
+def _is_int(x) -> bool:
+    return isinstance(x, (int, np.integer)) and not isinstance(x, bool)
+
+
+def _apply(scene: Scene, a: Action) -> Scene:
+    n = len(scene.pieces)
+
+    if a.kind == "select":
+        if _is_int(a.piece) and 0 <= a.piece < n:
+            return replace(scene, active=int(a.piece))
+        return scene                                     # sin pieza o fuera de rango
+    if a.kind == "select_next":
+        return replace(scene, active=(scene.active + 1) % n) if n else scene
+    if a.kind == "set_status":
+        return replace(scene, status=a.value) if a.value in STATUSES else scene
+
+    # Las acciones restantes actúan sobre una pieza: la indicada o, si piece es None, la activa.
+    idx = scene.active if a.piece is None else a.piece
+    if not (_is_int(idx) and 0 <= idx < n):
+        return scene
+    piece = scene.pieces[idx]
+    size = scene.container.size
+
+    if a.kind == "translate":
+        delta = np.asarray(a.delta, dtype=float)
+        if delta.shape != (3,) or not np.array_equal(delta, np.rint(delta)):
+            return scene                                 # solo pasos enteros: la pieza sigue en la rejilla
+        moved = Pose(piece.pose.rotation, piece.pose.position + delta)
+        return _with_pose(scene, idx, moved) if _inside(replace(piece, pose=moved), size) else scene
+
+    if a.kind == "rotate":
+        if not (_is_int(a.axis) and 0 <= a.axis <= 2 and _is_int(a.steps)):
+            return scene
+        # Ejes del MUNDO: el giro nuevo se multiplica a la IZQUIERDA de la rotación acumulada.
+        # (A la derecha giraría alrededor de los ejes propios de la pieza, que ya están girados y
+        # el usuario no ve.) El pivote no cambia: la posición guardada es la del pivote.
+        R = clean_rotation(rot_axis_exact(int(a.axis), int(a.steps)) @ piece.pose.rotation)
+        turned = Pose(R, piece.pose.position)
+        return _with_pose(scene, idx, turned) if _inside(replace(piece, pose=turned), size) else scene
+
+    if a.kind == "set_pose":
+        # La usa la animación de victoria (E9): las piezas pueden salir del contenedor, así que aquí
+        # no se aplican límites. Sí se exige una pose válida y se limpia la rotación (rigidez).
+        p = a.pose
+        if p is None:
+            return scene
+        R = np.asarray(p.rotation, dtype=float)
+        pos = np.asarray(p.position, dtype=float)
+        if R.shape != (3, 3) or pos.shape != (3,) or not (np.isfinite(R).all() and np.isfinite(pos).all()):
+            return scene
+        return _with_pose(scene, idx, Pose(clean_rotation(R), pos.copy()))
+
+    return scene                                         # kind desconocido
+
+
 def apply_action(scene: Scene, action: Action) -> Scene:
-    """(escena, acción) -> escena nueva. Nunca lanza excepción.
+    """(escena, acción) -> escena NUEVA. La de entrada nunca se modifica. Nunca lanza excepción.
 
-    E3: todavía no hay acciones implementadas (llegan en E4: select, select_next, translate,
-    rotate, set_pose, set_status). Toda acción se trata como "aún no soportada" y la escena se
-    devuelve sin cambios, que es exactamente lo que el contrato pide para una acción inválida.
-    Así la aplicación (C) ya puede llamar a apply_action sin esperar a E4.
+    Acciones (docs/INTERFACES.md §2, `Action`):
+      select(piece)          cambia la pieza activa; sin pieza o fuera de rango: sin cambios.
+      select_next            pasa a la siguiente pieza, volviendo a la primera al final.
+      translate(delta)       mueve la pieza un número ENTERO de cubos; se rechaza si se sale.
+      rotate(axis, steps)    gira 90°·steps alrededor de un eje del MUNDO por el pivote; se rechaza
+                             si alguna celda queda fuera del contenedor.
+      set_pose(pose)         pone una pose completa (animación). Sin límites; rotación limpiada.
+      set_status(value)      "playing" o "victory".
+    Cualquier otra cosa (kind desconocido, índice inválido, datos mal formados) devuelve `scene`.
+    Las validaciones de `_apply` cubren los casos conocidos; el try/except es solo la red de
+    seguridad que garantiza el "nunca lanza" del contrato ante datos que nadie anticipó.
     """
-    return scene
+    if not isinstance(action, Action):
+        return scene
+    try:
+        return _apply(scene, action)
+    except (TypeError, ValueError, IndexError, np.linalg.LinAlgError):
+        return scene
 
+
+# ---------------------------------------------------------------------------- geometría
 
 def container_mesh(size) -> Mesh3D:
     """(W, D, H) -> Mesh3D del contenedor en el MUNDO: rejilla en el piso y en dos paredes.
