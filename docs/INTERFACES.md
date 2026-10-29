@@ -202,6 +202,8 @@ Solo estas funciones se llaman desde otro módulo. Lo que empieza con `_` es pri
 | `model_matrix(piece: Piece) -> (4,4)` | pieza | `M` local → mundo | — |
 | `rot_axis_exact(axis: int, quarter_turns: int) -> (3,3)` | eje `0/1/2`, giros con signo | rotación con entradas exactas en `{-1, 0, 1}` | `quarter_turns` se toma módulo 4. |
 | `transform_points(M, pts) -> (N,3)` | `M (4,4)`, `pts (N,3)` | puntos transformados | — |
+| `rot_axis_angle(axis_vec, angle_rad) -> (3,3)` | eje cualquiera `(3,)`, ángulo en radianes | rotación continua (Rodrigues), para la animación de victoria | `ValueError` si el eje es el vector cero. |
+| `occupied_cells(piece) -> (n,3) int` | pieza | celdas enteras del contenedor que ocupa en el mundo | — |
 
 ### 3.2 Módulo B — `blockout.projection`
 
@@ -293,7 +295,11 @@ teclado / ratón / guion de la demo        (C)
 | Cara que mira hacia otro lado | Se descarta (backface culling) antes de dibujar. |
 | Acción con `piece` fuera de rango o `kind` desconocido | `apply_action` devuelve la escena **sin cambios**, sin excepción. |
 | `select` sin `piece` | Devuelve la escena sin cambios (no cambia la selección). |
-| Rotaciones acumuladas | Se usan matrices exactas de 90° y se re-ortonormaliza con SVD: la pieza no se deforma ni se desalinea. |
+| Rotaciones acumuladas | Se usan matrices exactas de 90° y se re-ortonormaliza con SVD: la pieza no se deforma ni se desalinea. Si el resultado está a menos de `1e-9` de una matriz con entradas en `{-1,0,1}`, se toma esa (la SVD varía entre plataformas). |
+| `translate` o `rotate` que dejaría alguna celda fuera del contenedor | Se rechaza: `apply_action` devuelve la escena **sin cambios**. No se buscan posiciones alternativas. |
+| `translate` con `delta` no entero o mal formado | Escena sin cambios: solo se avanza un número entero de cubos para no salir de la rejilla. |
+| `set_pose` | **Sin límites** de contenedor (la animación puede sacar las piezas). Exige rotación `(3,3)` y posición `(3,)` finitas; la rotación se limpia igual que en `rotate`. |
+| Piezas que se cruzan entre sí | No se detecta: las colisiones entre piezas son opcionales (R34). |
 | Elevación de la cámara en ±90° | Se limita a ±89° para que `look_at` no sea degenerado. |
 | Coordenadas de píxel enormes (extremo casi en el plano de la cámara) | La interfaz descarta segmentos con coordenadas > 1e5 en vez de dibujar basura. |
 
