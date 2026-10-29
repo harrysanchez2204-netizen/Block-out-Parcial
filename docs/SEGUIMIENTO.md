@@ -8,8 +8,11 @@ enlaces a commits y PR.
 - **Hecho:** esqueleto del repositorio, CI en Linux y Windows (T01) — PR #1 fusionado.
 - **Hecho:** contrato entre módulos (T02, T03) — `docs/INTERFACES.md`, `src/blockout/core/types.py`,
   `tests/fixtures/shared_example.json` y `tests/test_contratos.py` en el PR de la rama `feat/e2-contratos`.
-- **En curso:** aprobación del PR de contrato por los tres integrantes; PR de prueba de A y B; protección
-  de la rama `main` y tablero.
+- **Hecho:** PR #2 de contrato aprobado y fusionado en `main` (commit `26cd9f2`).
+- **En curso (E3, Hito 2):** primera integración en tres PR — `feat/e3-escena` (A), `feat/e3-proyeccion` (B)
+  y `feat/e3-app` (C). A y B son independientes; C se fusiona después de ambos. Evidencia:
+  `docs/img/e3_primera_integracion.png`.
+- **Pendiente:** PR de prueba de A y B (T01); protección de la rama `main` y tablero.
 - **Bloqueos:** _completar_
 - **Decisiones:**
   - Mundo de mano derecha con `Z` hacia arriba y piso en `Z = 0`; unidad = 1 cubo.
@@ -22,4 +25,8 @@ enlaces a commits y PR.
     las acciones inválidas se ignoran en vez de lanzar excepción.
   - Mover la cámara no toca la escena y transformar una pieza no toca la cámara.
   - Los puntos con `z_cam ≤ near` nunca se dividen: se marcan no visibles (`NaN`) y las aristas se recortan.
+  - (E3) Vista inicial: objetivo `(2.5, 2.5, 5)`, azimut −60°, elevación 25°, distancia 22, FOV 50°. Se
+    aparta de la guía (objetivo a `z = 4`, distancia 20) porque con esa vista el contenedor se salía por arriba.
+  - (E3) El contenedor dibuja rejilla en el piso y en las paredes del fondo (`Y = D`) e izquierda (`X = 0`),
+    que son las lejanas desde la vista inicial; las cercanas solo llevan borde para no tapar las piezas.
 - **Cambios de cronograma:** _completar_
