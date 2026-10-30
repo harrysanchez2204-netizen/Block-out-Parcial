@@ -22,6 +22,7 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | Verificación de E8: revisión del contrato contra el código, `test_contrato_codigo.py`, `test_trazabilidad.py`, `docs/VERIFICACION.md`, documentos de planeación y revisión del historial de PR | Claude | PR de E8: _completar_ |
 | 2026-10-28 | Borrador de E6: mapa de teclas y ratón, HUD, renderizador con caras y aristas por profundidad, sección Controles del README y pruebas con eventos simulados | Claude | PR #9 |
 | 2026-10-29 | Borrador de E9: `animation.py`, `demo.py`, integración en `main.py`, tecla `V`, `--demo` y `tests/test_smoke.py` | Claude | PR de E9: _completar_ |
+| 2026-10-29 | E9 (rol A): caché de la malla local y `tests/test_victoria_escena.py`; R22 y R23 en `docs/VERIFICACION.md` | Claude | PR de E9: _completar_ |
 
 
 ## Cómo se verificó el código y las afirmaciones matemáticas
@@ -61,4 +62,4 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | Dos giros del guion de la demo sacaban piezas del contenedor y la escena los rechazaba en silencio | `test_ninguna_accion_del_guion_es_rechazada` | Separar la pieza de la pared antes de girarla |
 | 2026-10-29 | En la victoria, la pieza de arriba se salía del cuadro | Mosaico de capturas de la demo | Las piezas se juntan hacia la altura media del pozo |
 | 2026-10-29 | 360 pasos de 1/60 s suman 5.9999… y la victoria duraba 361 fotogramas | Prueba de duración | Tolerancia de `1e-9` |
-
+| 2026-10-29 | `get_geometry` reconstruía la malla de cada pieza en cada fotograma (31 % del tiempo): la demo con caras iba a 63 fps posibles | Perfilado de la demo | Malla en caché por forma, de solo lectura: 93 fps |
