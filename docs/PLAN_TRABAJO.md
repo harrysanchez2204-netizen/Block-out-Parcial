@@ -14,7 +14,7 @@ Cada tarea se enlaza con sus commits y PR en `docs/SEGUIMIENTO.md`.
 | T07 | E4 | ≥5 piezas (≥2 no planarias), acciones, pivotes, rigidez | A | T04 | Pruebas de rigidez y pivote pasan; revisa C | Terminada (PR #6 código, aprobado por C; PR #7 contrato) |
 | T08 | E5 | `OrbitCamera`, FOV, reset, recorte robusto | B | T05 | Cero fallos en prueba aleatoria; revisa A | Terminada (PR #8), sin revisión formal |
 | T09 | E6 | Entrada, HUD, controles | C | T06 | README lista los mismos controles que el HUD; revisa B | Terminada (PR #9), sin revisión formal |
-| T10 | E7 | Experimento de homografía y derivación | B | T05 | Tabla de errores y explicación fuera del plano; revisa A | Terminada (PR #_completar_) |
+| T10 | E7 | Experimento de homografía y derivación | B | T05 | Tabla de errores y explicación fuera del plano; revisa A | Terminada (PR #10) |
 | T11 | E8 | Integración del prototipo (Hito 3) | Todos | T07–T10 | Etiqueta `v0.3-prototipo` | En curso (`docs/e8-integracion`, `docs/VERIFICACION.md`) |
 | T12 | E9 | Animación de victoria y modo demo | C (+A) | T11 | La demo deja las mismas poses finales en dos ejecuciones | Pendiente |
 | T13 | E10 | Pruebas, informe, README, AI_USAGE, contribuciones, video, etiqueta `v1.0` | Todos | T12 | Lista de entregables del enunciado §10 completa | Pendiente |

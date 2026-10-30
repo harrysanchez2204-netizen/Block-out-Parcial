@@ -15,8 +15,8 @@ enlaces a commits y PR.
   contrato (PR #7).
 - **Hecho (2026-10-28):** E5, cámara orbital, recorte de polígonos y caras rellenas (PR #8).
 - **Hecho (2026-10-29):** E6, controles de teclado y ratón, HUD y dibujo por profundidad (PR #9).
-- **Hecho (_fecha_):** E7, experimento de homografía (PR #_completar_, revisado por A). Resultados en
-  `docs/INFORME.md` §2.
+- **Hecho (2026-10-29):** E7, experimento de homografía (PR #10, `858f74d`). Resultados en `docs/INFORME.md` §2.
+- **Hecho (2026-10-29):** capturas de E4 restauradas y uso de IA de E4 registrado (PR #11).
 - **En curso:** E8, integración del prototipo (`docs/e8-integracion`). Verificación R01–R21 en
   `docs/VERIFICACION.md`; 7 desajustes entre el contrato y el código corregidos.
 - **Bloqueos y problemas de proceso (encontrados en E8):**
