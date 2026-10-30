@@ -12,13 +12,15 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 
 ## Tareas delegadas
 
-| Fecha | Tarea | Herramienta | PR / commit |
-| --- | --- | --- | --- |
+| Fecha      | Tarea | Herramienta | PR / commit |
+|------------| --- | --- | --- |
 | 2026-10-27 | Esqueleto del repositorio, CI, plantillas y documentos base (E1) | Claude | _completar_ |
 | 2026-10-28 | Borrador de E3: `scene/` (M, malla local, contenedor, `get_geometry`), `projection/` (K, `look_at`, recorte, `project`), `app/` (ventana, bucle, dibujo) y pruebas | Claude | PR de A, B y C de E3: _completar_ |
 | 2026-10-28 | Borrador de E4: catálogo de 6 piezas, `is_planar`, forma canónica, acciones con límites del contenedor, `clean_rotation`, `rot_axis_angle` y pruebas | Claude | PR de E4: _completar_ |
 | 2026-10-28 | Borrador de E5: `OrbitCamera`, `clip_polygon_near`, descarte de caras traseras, algoritmo del pintor y pruebas | Claude | PR #8 |
 | 2026-10-29 | Borrador de E7: `homography.py`, experimento, pruebas y sección 2 de `docs/INFORME.md` | Claude | PR de E7: pendiente |
+| 2026-10-29 | Verificación de E8: revisión del contrato contra el código, `test_contrato_codigo.py`, `test_trazabilidad.py`, `docs/VERIFICACION.md`, documentos de planeación y revisión del historial de PR | Claude | PR de E8: _completar_ |
+
 
 ## Cómo se verificó el código y las afirmaciones matemáticas
 
@@ -46,3 +48,7 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | Los primeros puntos interiores tenían un margen de colinealidad de 9.6 px | Medición del margen | Se eligieron `(1, 3)` y `(4, 2.5)`, alcanzando 28.4 px |
 | 2026-10-29 | Los vértices de las piezas producían errores de miles de píxeles | Revisión de resultados | Se explicó el efecto de los rayos casi paralelos al piso y se agregó la mediana |
 | 2026-10-29 | Las cifras de error del orden de `1e-13` variaban entre plataformas | Revisión de portabilidad | Se utilizaron valores `< 1e-9` en las tablas |
+| 2026-10-29 | 7 desajustes entre `docs/INTERFACES.md` y el código (por ejemplo, §3.3 decía que `run` estaba en `blockout.app` y no se exportaba) | Revisión del contrato contra el código en E8 | Contrato actualizado, `app/__init__.py` exporta `run` y `render_frame`, y `tests/test_contrato_codigo.py` lo vigila |
+| 2026-10-29 | La primera versión de `test_contrato_codigo.py` separaba mal `size=(1000,700)` y daba 14 fallos falsos | La prueba falló contra un código correcto | Separar los parámetros solo por comas fuera de paréntesis |
+| 2026-10-29 | Los PR #2, #3, #4, #7, #8 y #9 se fusionaron sin aprobación formal; la protección de `main` no estaba activa | Revisión del historial de PR en E8 | Protección de `main` activada, regla "nadie fusiona su propio PR" y revisiones posteriores a la fusión |
+
