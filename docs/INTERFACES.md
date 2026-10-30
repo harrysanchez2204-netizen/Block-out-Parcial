@@ -241,8 +241,8 @@ Homografía, en `blockout.projection.homography` (la usan `experiments/` y las p
 | --- | --- | --- |
 | `run(demo=False, size=(1000,700), max_frames=None)` | banderas | abre la ventana y corre el bucle |
 | `render_frame(surface, font, prim, hud_lines)` | `DrawPrimitives2D` | dibuja en la superficie |
-| `VictoryAnimation(scene).step(dt) -> list[Action]` | `dt` en segundos | acciones `set_pose` (**E9**, todavía no existe) |
-| `DemoRunner().tick() -> list[(frame, kind, data)]` | — | eventos del guion del fotograma actual (**E9**, todavía no existe) |
+| `VictoryAnimation(scene).step(dt) -> list[Action]` | `dt` en segundos | `set_status("victory")` en el primer paso; un `set_pose` por pieza en cada paso; al terminar, las poses originales exactas y `set_status("playing")`. Después, `finished` es `True` y devuelve `[]` |
+| `DemoRunner().tick() -> list[(frame, kind, data)]` | — | eventos del guion del fotograma actual, y avanza un fotograma. `kind`: `action` (`Action`), `camera` o `app` (orden de la interfaz), `victory`. `finished` al acabar el guion |
 
 ---
 
@@ -315,6 +315,9 @@ teclado / ratón / guion de la demo        (C)
 | Elevación de la cámara en ±90° | Se limita a ±89° para que `look_at` no sea degenerado. |
 | Coordenadas de píxel enormes (extremo casi en el plano de la cámara) | La interfaz descarta segmentos y caras con coordenadas > 1e5 o no finitas en vez de dibujar basura. |
 | Dibujo con caras rellenas | La interfaz dibuja caras y aristas en **una sola lista** ordenada de lejos a cerca; a igual profundidad, primero la cara. |
+| Acción de pieza durante la animación de victoria | Se ignora y el HUD lo avisa: la animación fija todas las poses en cada fotograma y al terminar restaura las del principio. La cámara sigue respondiendo. |
+| Tiempo de la animación y de la demo | Avanza `1/60` s **por fotograma**, no según el reloj real: el mismo número de fotogramas da siempre las mismas poses. |
+| Entrada durante la demo | Se ignoran el ratón y el teclado salvo salir, ayuda, caras y `Enter` (repetir). |
 | `translate` o `rotate` rechazado desde el teclado | No es un error: la interfaz lo detecta porque `apply_action` devuelve **el mismo objeto** (`nuevo is anterior`) y muestra un aviso en el HUD. |
 
 ---
@@ -416,3 +419,4 @@ privadas, pruebas, colores, mensajes del HUD.
 | E2 | #2 | Acuerdo inicial: coordenadas, estructuras, funciones públicas, casos límite y ejemplo compartido. |
 | E4 | #7 | `rot_axis_angle` y `occupied_cells` (§3.1); límites del contenedor, `translate` entero, `set_pose` sin límites, rotaciones limpiadas y piezas cruzadas (§6). |
 | E8 | _completar_ | Revisión contra el código del prototipo: errores de `create_scene`, `clip_polygon_near`, caras en `project`, entradas inválidas de `OrbitCamera`, funciones de homografía, E9 marcado como pendiente y tres casos de dibujo en §6. **Ningún tipo ni firma existente cambia.** |
+| E9 | _completar_ | `VictoryAnimation` y `DemoRunner` implementados (§3.3, ya no pendientes) y tres casos nuevos en §6 (acciones durante la victoria, tiempo por fotograma, entrada en la demo). |

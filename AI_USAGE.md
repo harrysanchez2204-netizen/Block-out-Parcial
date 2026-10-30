@@ -20,6 +20,8 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-28 | Borrador de E5: `OrbitCamera`, `clip_polygon_near`, descarte de caras traseras, algoritmo del pintor y pruebas | Claude | PR #8 |
 | 2026-10-29 | Borrador de E7: `homography.py`, experimento, pruebas y sección 2 de `docs/INFORME.md` | Claude | PR de E7: pendiente |
 | 2026-10-29 | Verificación de E8: revisión del contrato contra el código, `test_contrato_codigo.py`, `test_trazabilidad.py`, `docs/VERIFICACION.md`, documentos de planeación y revisión del historial de PR | Claude | PR de E8: _completar_ |
+| 2026-10-28 | Borrador de E6: mapa de teclas y ratón, HUD, renderizador con caras y aristas por profundidad, sección Controles del README y pruebas con eventos simulados | Claude | PR #9 |
+| 2026-10-29 | Borrador de E9: `animation.py`, `demo.py`, integración en `main.py`, tecla `V`, `--demo` y `tests/test_smoke.py` | Claude | PR de E9: _completar_ |
 
 
 ## Cómo se verificó el código y las afirmaciones matemáticas
@@ -53,4 +55,10 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | Los PR #2, #3, #4, #7, #8 y #9 se fusionaron sin aprobación formal; la protección de `main` no estaba activa | Revisión del historial de PR en E8 | Protección de `main` activada, regla "nadie fusiona su propio PR" y revisiones posteriores a la fusión |
 | 2026-10-29 | El experimento terminaba con `UnicodeEncodeError` al imprimir `σ` y `⁻¹` con la consola de Windows en cp1252 | Prueba simulando cp1252 durante la verificación de E8 | `sys.stdout.reconfigure(errors="replace")` y una prueba que lo reproduce (PR `fix/e7-consola-windows`) |
 
+| 2026-10-28 | La ayuda del HUD en líneas largas tapaba el borde superior del contenedor | Revisión de la captura | Columna angosta a la izquierda, verificada por una prueba; tecla `H` para ocultarla |
+| 2026-10-28 | La guía ponía el FOV en `[` `]`, que en teclado latinoamericano requieren AltGr | Revisión de la distribución de teclado | FOV en `Z` / `X` |
+| 2026-10-29 | La fórmula de victoria de la guía hacía saltar las piezas al empezar (en `t = 0` no estaban en su pose) | Comparar la pose en `t = 0` con la original | Curvas `e(s)` y `b(s)` que empiezan y terminan en la pose original |
+| 2026-10-29 | Dos giros del guion de la demo sacaban piezas del contenedor y la escena los rechazaba en silencio | `test_ninguna_accion_del_guion_es_rechazada` | Separar la pieza de la pared antes de girarla |
+| 2026-10-29 | En la victoria, la pieza de arriba se salía del cuadro | Mosaico de capturas de la demo | Las piezas se juntan hacia la altura media del pozo |
+| 2026-10-29 | 360 pasos de 1/60 s suman 5.9999… y la victoria duraba 361 fotogramas | Prueba de duración | Tolerancia de `1e-9` |
 
