@@ -244,6 +244,20 @@ def test_los_resultados_guardados_son_los_que_produce_el_experimento():
     assert (ROOT / "results" / "homografia.md").read_text(encoding="utf-8") == exp.to_markdown(fresh)
 
 
+def test_el_experimento_no_falla_con_la_consola_de_windows(tmp_path, monkeypatch):
+    """La consola de Windows en español usa cp1252, sin `σ` ni `⁻¹`. El script no debe fallar."""
+    import io
+    import sys
+    exp = _load_experiment()
+    consola = io.TextIOWrapper(io.BytesIO(), encoding="cp1252")
+    monkeypatch.setattr(sys, "stdout", consola)
+    exp.main(out_dir=tmp_path)
+    consola.flush()
+    assert "H21" in consola.buffer.getvalue().decode("cp1252")
+    assert {p.name for p in tmp_path.iterdir()} == {"homografia.json", "homografia.md",
+                                                    "homografia.png"}
+
+
 def test_el_informe_tiene_las_tablas_actuales():
     exp = _load_experiment()
     informe = (ROOT / "docs" / "INFORME.md").read_text(encoding="utf-8")

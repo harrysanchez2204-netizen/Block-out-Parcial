@@ -51,4 +51,6 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | 7 desajustes entre `docs/INTERFACES.md` y el código (por ejemplo, §3.3 decía que `run` estaba en `blockout.app` y no se exportaba) | Revisión del contrato contra el código en E8 | Contrato actualizado, `app/__init__.py` exporta `run` y `render_frame`, y `tests/test_contrato_codigo.py` lo vigila |
 | 2026-10-29 | La primera versión de `test_contrato_codigo.py` separaba mal `size=(1000,700)` y daba 14 fallos falsos | La prueba falló contra un código correcto | Separar los parámetros solo por comas fuera de paréntesis |
 | 2026-10-29 | Los PR #2, #3, #4, #7, #8 y #9 se fusionaron sin aprobación formal; la protección de `main` no estaba activa | Revisión del historial de PR en E8 | Protección de `main` activada, regla "nadie fusiona su propio PR" y revisiones posteriores a la fusión |
+| 2026-10-29 | El experimento terminaba con `UnicodeEncodeError` al imprimir `σ` y `⁻¹` con la consola de Windows en cp1252 | Prueba simulando cp1252 durante la verificación de E8 | `sys.stdout.reconfigure(errors="replace")` y una prueba que lo reproduce (PR `fix/e7-consola-windows`) |
+
 
