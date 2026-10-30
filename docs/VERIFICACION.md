@@ -1,10 +1,11 @@
-# Verificación del prototipo (E8, Hito 3)
+# Verificación del prototipo (E8, Hito 3) y de la victoria y la demo (E9)
 
-Lista de verificación de los requisitos obligatorios R01–R21 de la guía (derivados del enunciado §3).
+Lista de verificación de los requisitos obligatorios R01–R23 de la guía (derivados del enunciado §3). R01–R21
+se verificaron en E8; R22 y R23 se agregan en E9.
 Para cada uno hay una **prueba automática** que corre en el CI (Linux y Windows, Python 3.10 y 3.12) y una
 **comprobación manual** que se hace con la aplicación abierta durante la sesión conjunta de E8.
 
-`tests/test_trazabilidad.py` comprueba que cada prueba citada aquí existe y que están los 21 requisitos.
+`tests/test_trazabilidad.py` comprueba que cada prueba citada aquí existe y que están los 23 requisitos.
 
 **Cómo llenarlo.** En la sesión, cada integrante corre `python -m blockout` en su máquina y hace las
 comprobaciones manuales. En la columna de su sistema escribe sus iniciales y `✔`, o `✘` con una nota debajo
@@ -36,6 +37,8 @@ Iniciales: **EP** Emmanuel · **JA** Juan Sebastián · **HQ** Harrinson.
 | R19 | Verificar con ≥ 4 puntos y reportar errores en píxeles | `tests/test_homography.py::test_H21_lleva_el_piso_de_una_vista_a_la_otra` | `python experiments/homography_experiment.py` imprime las tablas de `docs/INFORME.md` §2.4 | | |
 | R20 | Mostrar que falla fuera del plano | `tests/test_homography.py::test_la_misma_H_falla_fuera_del_plano_y_el_error_crece_con_la_altura` | `results/homografia.png` y la tabla de errores contra `Z` | | |
 | R21 | HUD con controles, pieza activa y estado | `tests/test_interfaz.py::test_el_hud_muestra_pieza_estado_y_camara` | La columna izquierda muestra pieza, estado, cámara y teclas; `H` la oculta | | |
+| R22 | Animación de victoria con la misma cadena y la cámara activa | `tests/test_smoke.py::test_la_victoria_cambia_poses_del_mundo_y_no_la_pantalla` | `V`: las piezas salen del pozo girando y vuelven a su lugar; mientras tanto se puede orbitar y acercar; las piezas no responden al teclado | | |
+| R23 | Modo demostración determinista y reproducible | `tests/test_smoke.py::test_la_demo_es_determinista` | `python -m blockout --demo` dos veces: lo mismo en los mismos segundos (20 s); `Enter` la repite | | |
 
 ## Notas de la sesión
 

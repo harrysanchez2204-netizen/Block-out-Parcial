@@ -8,6 +8,8 @@ propiedades no se afirman a ojo: `is_planar` y `canonical_form` permiten comprob
 """
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
 
 from blockout.scene.transforms import rot_axis_exact
@@ -109,7 +111,7 @@ CUBE_FACES = [(0, 1, 3, 2), (4, 5, 7, 6),          # z = 0, z = 1
               (0, 2, 6, 4), (1, 3, 7, 5)]          # x = 0, x = 1
 
 
-def local_mesh(cells) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _build_local_mesh(cells) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """celdas -> (vértices (N,3), aristas (E,2), caras (F,4)) en coordenadas LOCALES.
 
     * Los vértices compartidos entre cubos vecinos se guardan una sola vez (diccionario por
@@ -153,3 +155,24 @@ def local_mesh(cells) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return (np.array(verts, dtype=float),
             np.array(sorted(edges), dtype=int).reshape(-1, 2),
             np.array(faces, dtype=int).reshape(-1, 4))
+
+
+@lru_cache(maxsize=64)
+def _cached_local_mesh(key: tuple) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Malla local construida UNA vez por forma de pieza, con arreglos de solo lectura."""
+    arrays = _build_local_mesh(key)
+    for a in arrays:
+        a.setflags(write=False)
+    return arrays
+
+
+def local_mesh(cells) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """celdas -> (vértices (N,3), aristas (E,2), caras (F,4)) en coordenadas LOCALES. Ver _build_local_mesh.
+
+    E9: la forma de una pieza nunca cambia (solo cambia su pose), pero get_geometry la pedía en cada
+    fotograma: era el 31 % del tiempo de un fotograma de la demo. Ahora se construye una vez por forma
+    y se reutiliza. Los arreglos devueltos son de SOLO LECTURA: si alguien intenta modificarlos, numpy
+    lanza ValueError en vez de dañar en silencio la malla de todos los fotogramas siguientes.
+    """
+    key = tuple(tuple(int(round(x)) for x in c) for c in cells)
+    return _cached_local_mesh(key)
