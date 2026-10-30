@@ -53,6 +53,8 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | 7 desajustes entre `docs/INTERFACES.md` y el código (por ejemplo, §3.3 decía que `run` estaba en `blockout.app` y no se exportaba) | Revisión del contrato contra el código en E8 | Contrato actualizado, `app/__init__.py` exporta `run` y `render_frame`, y `tests/test_contrato_codigo.py` lo vigila |
 | 2026-10-29 | La primera versión de `test_contrato_codigo.py` separaba mal `size=(1000,700)` y daba 14 fallos falsos | La prueba falló contra un código correcto | Separar los parámetros solo por comas fuera de paréntesis |
 | 2026-10-29 | Los PR #2, #3, #4, #7, #8 y #9 se fusionaron sin aprobación formal; la protección de `main` no estaba activa | Revisión del historial de PR en E8 | Protección de `main` activada, regla "nadie fusiona su propio PR" y revisiones posteriores a la fusión |
+| 2026-10-29 | El experimento terminaba con `UnicodeEncodeError` al imprimir `σ` y `⁻¹` con la consola de Windows en cp1252 | Prueba simulando cp1252 durante la verificación de E8 | `sys.stdout.reconfigure(errors="replace")` y una prueba que lo reproduce (PR `fix/e7-consola-windows`) |
+
 | 2026-10-28 | La ayuda del HUD en líneas largas tapaba el borde superior del contenedor | Revisión de la captura | Columna angosta a la izquierda, verificada por una prueba; tecla `H` para ocultarla |
 | 2026-10-28 | La guía ponía el FOV en `[` `]`, que en teclado latinoamericano requieren AltGr | Revisión de la distribución de teclado | FOV en `Z` / `X` |
 | 2026-10-29 | La fórmula de victoria de la guía hacía saltar las piezas al empezar (en `t = 0` no estaban en su pose) | Comparar la pose en `t = 0` con la original | Curvas `e(s)` y `b(s)` que empiezan y terminan en la pose original |

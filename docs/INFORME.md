@@ -225,11 +225,11 @@ cámara no cambia de centro.
 
 ### 2.7 Cómo se verifica
 
-`tests/test_homography.py` (17 pruebas) comprueba la derivación (`H = P` sin su tercera columna, las dos fórmulas
+`tests/test_homography.py` (18 pruebas) comprueba la derivación (`H = P` sin su tercera columna, las dos fórmulas
 iguales en 50 pares de cámaras al azar, también la pared del fondo), la verificación (posición general, error
 `< 1e-7` px en 50 pares, DLT exacto con 4 y con 6 puntos, DLT con ruido del orden de σ, datos degenerados
 rechazados), el paralaje (cero solo en el plano, creciente con `Z`, fórmula igual al medido), el caso de mismo
-centro y la cámara sobre el plano. Además, dos pruebas vuelven a correr el experimento y fallan si
+centro y la cámara sobre el plano. Una prueba comprueba que el script no falla con la consola de Windows en cp1252. Además, dos pruebas vuelven a correr el experimento y fallan si
 `results/homografia.json`, `results/homografia.md` o las tablas de **este informe** no coinciden con lo que sale:
 las cifras de esta sección no pueden quedar desactualizadas.
 

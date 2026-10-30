@@ -247,14 +247,24 @@ def save_figure(r: dict, path: Path) -> None:
     plt.close(fig)
 
 
-def main() -> None:
+def main(out_dir: Path | None = None) -> None:
+    """Corre el experimento, escribe los tres archivos en `out_dir` (por defecto results/) e imprime.
+
+    La consola de Windows en español suele usar cp1252, que no tiene `σ` ni `⁻¹`: con esa
+    codificación, `print` lanzaba UnicodeEncodeError (pasa, por ejemplo, al redirigir la salida a
+    un archivo). Con errors="replace" esos caracteres salen como "?" y el script no falla. Los
+    archivos se escriben siempre en UTF-8, así que no se ven afectados.
+    """
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")
+    out = Path(out_dir) if out_dir is not None else RESULTS
     r = run()
-    RESULTS.mkdir(exist_ok=True)
-    (RESULTS / "homografia.json").write_text(json.dumps(r, indent=2, ensure_ascii=False) + "\n",
-                                             encoding="utf-8")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "homografia.json").write_text(json.dumps(r, indent=2, ensure_ascii=False) + "\n",
+                                         encoding="utf-8")
     md = to_markdown(r)
-    (RESULTS / "homografia.md").write_text(md, encoding="utf-8")
-    save_figure(r, RESULTS / "homografia.png")
+    (out / "homografia.md").write_text(md, encoding="utf-8")
+    save_figure(r, out / "homografia.png")
 
     np.set_printoptions(precision=6, suppress=True)
     print("H21 (analítica, H[2,2] = 1) =\n", np.array(r["H21"]))
@@ -265,7 +275,7 @@ def main() -> None:
     print(f"Paralaje: fórmula contra medido, diferencia máx = "
           f"{r['paralaje_formula_vs_medido_max_px']:.1e} px\n")
     print(md)
-    print(f"Archivos escritos en {RESULTS}")
+    print(f"Archivos escritos en {out}")
 
 
 if __name__ == "__main__":
