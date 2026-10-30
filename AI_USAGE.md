@@ -46,3 +46,15 @@ Todo cambio generado por IA pasa por pull request y revisión humana.
 | 2026-10-29 | Los primeros puntos interiores tenían un margen de colinealidad de 9.6 px | Medición del margen | Se eligieron `(1, 3)` y `(4, 2.5)`, alcanzando 28.4 px |
 | 2026-10-29 | Los vértices de las piezas producían errores de miles de píxeles | Revisión de resultados | Se explicó el efecto de los rayos casi paralelos al piso y se agregó la mediana |
 | 2026-10-29 | Las cifras de error del orden de `1e-13` variaban entre plataformas | Revisión de portabilidad | Se utilizaron valores `< 1e-9` en las tablas |
+
+
+| 2026-10-28 | Borrador de E6: mapa de teclas y ratón, HUD, renderizador con caras y aristas por profundidad, sección Controles del README y pruebas con eventos simulados | Claude | PR #9 |
+| 2026-10-29 | Borrador de E9: `animation.py`, `demo.py`, integración en `main.py`, tecla `V`, `--demo` y `tests/test_smoke.py` | Claude | PR de E9: _completar_ |
+
+
+| 2026-10-28 | La ayuda del HUD en líneas largas tapaba el borde superior del contenedor | Revisión de la captura | Columna angosta a la izquierda, verificada por una prueba; tecla `H` para ocultarla |
+| 2026-10-28 | La guía ponía el FOV en `[` `]`, que en teclado latinoamericano requieren AltGr | Revisión de la distribución de teclado | FOV en `Z` / `X` |
+| 2026-10-29 | La fórmula de victoria de la guía hacía saltar las piezas al empezar (en `t = 0` no estaban en su pose) | Comparar la pose en `t = 0` con la original | Curvas `e(s)` y `b(s)` que empiezan y terminan en la pose original |
+| 2026-10-29 | Dos giros del guion de la demo sacaban piezas del contenedor y la escena los rechazaba en silencio | `test_ninguna_accion_del_guion_es_rechazada` | Separar la pieza de la pared antes de girarla |
+| 2026-10-29 | En la victoria, la pieza de arriba se salía del cuadro | Mosaico de capturas de la demo | Las piezas se juntan hacia la altura media del pozo |
+| 2026-10-29 | 360 pasos de 1/60 s suman 5.9999… y la victoria duraba 361 fotogramas | Prueba de duración | Tolerancia de `1e-9` |

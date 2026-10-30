@@ -5,7 +5,7 @@ sintéticos y sin pantalla (tests/test_interfaz.py). Quien ejecuta las órdenes 
 
   * orden "action" -> apply_action(scene, action)        (A: la escena solo cambia así)
   * orden "orbit" / "zoom" / "fov" / "reset" -> métodos de OrbitCamera   (B: solo cambia la cámara)
-  * orden "faces" / "help" / "quit" -> estado propio de la aplicación      (C)
+  * orden "faces" / "help" / "victory" / "quit" -> estado propio de la aplicación (C)
 
 Teclas: se usan LETRAS para todo lo importante. pygame entrega el código de la tecla según la
 distribución del teclado (en español latinoamericano, `[` y `]` exigen AltGr o están en otro lugar),
@@ -32,7 +32,7 @@ FOV_STEP = 5.0                 # grados por pulsación de Z / X
 
 @dataclass(frozen=True)
 class Command:
-    """Una orden para main.py. `kind`: action | orbit | zoom | fov | reset | faces | help | quit."""
+    """Una orden para main.py. `kind`: action | orbit | zoom | fov | reset | faces | help | victory | quit."""
     kind: str
     action: Action | None = None
     args: tuple = ()
@@ -76,6 +76,7 @@ CAMERA_KEYS: dict[int, Command] = {
 APP_KEYS: dict[int, Command] = {
     pygame.K_g: Command("faces"),
     pygame.K_h: Command("help"),
+    pygame.K_v: Command("victory"),
     pygame.K_ESCAPE: Command("quit"),
 }
 
@@ -93,7 +94,8 @@ HELP_LINES: list[str] = [
     "  rueda o RePag/AvPag  distancia",
     "  Z/X  campo de vision",
     "  C    vista inicial",
-    "G caras   H ayuda   Esc salir",
+    "V victoria   G caras",
+    "H ayuda   Esc salir",
 ]
 
 

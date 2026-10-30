@@ -10,11 +10,12 @@ from blockout.core.types import Scene
 
 
 def build_hud_lines(scene: Scene, camera, fill_faces: bool, message: str = "",
-                    demo: bool = False, show_help: bool = True) -> list[str]:
+                    demo: bool = False, show_help: bool = True, banner: str = "") -> list[str]:
     """(escena, OrbitCamera, caras sí/no, último aviso, …) -> líneas del HUD, de arriba hacia abajo.
 
     Arriba van el estado (cortas, para no llegar al borde superior del contenedor) y debajo la ayuda
-    en columna angosta. Con show_help=False solo queda el estado.
+    en columna angosta. Con show_help=False solo queda el estado. `banner` es una línea opcional
+    (resaltada si empieza con "!") para el avance de la demo o la animación de victoria.
     """
     if scene.pieces:
         p = scene.pieces[scene.active]
@@ -28,6 +29,7 @@ def build_hud_lines(scene: Scene, camera, fill_faces: bool, message: str = "",
          f"dist={camera.distance:4.1f}  fov={camera.fov:5.1f}   "
          f"Caras: {'si' if fill_faces else 'no'}"),
         message,                       # vacío si no hay aviso: deja la línea en blanco, sin saltos
+        banner,
         "",
     ]
     return lines + (HELP_LINES if show_help else [])

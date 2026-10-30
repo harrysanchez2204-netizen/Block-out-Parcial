@@ -51,9 +51,17 @@ pytest -q
 
 ```bash
 python -m blockout                              # aplicación interactiva
-python -m blockout --demo                       # demostración determinista (llega en E9)
+python -m blockout --demo                       # demostración determinista (20 s; Enter la repite)
 python experiments/homography_experiment.py     # experimento de homografía -> results/
 ```
+
+## Modo demostración
+
+`python -m blockout --demo` corre un guion fijo de 20 segundos: la escena quieta, transformaciones de
+piezas (incluidas las dos no planarias), caras rellenas, movimientos de cámara y la animación de victoria con
+la cámara orbitando. El guion va por número de fotograma y no usa el reloj ni números al azar, así que
+siempre hace exactamente lo mismo. Durante la demo se ignoran el ratón y el teclado, salvo `Esc` (salir),
+`H` (ayuda), `G` (caras) y `Enter` (repetir desde el principio).
 
 ## Controles
 
@@ -70,7 +78,8 @@ CAMARA
   rueda o RePag/AvPag  distancia
   Z/X  campo de vision
   C    vista inicial
-G caras   H ayuda   Esc salir
+V victoria   G caras
+H ayuda   Esc salir
 ```
 
 | Control | Efecto | Qué cambia |
@@ -84,6 +93,7 @@ G caras   H ayuda   Esc salir
 | `C` | Volver a la vista inicial | Cámara (B) |
 | `G` | Activar / desactivar caras rellenas | Aplicación (C) |
 | `H` | Mostrar / ocultar esta ayuda en pantalla | Aplicación (C) |
+| `V` | Animación de victoria (6 s). Mientras dura, las piezas no responden pero la cámara sí | Escena (A), vía C |
 | `Esc` | Salir | Aplicación (C) |
 
 Si una pieza no se mueve, el movimiento la sacaría del contenedor y se rechaza; el HUD lo avisa. Los ejes

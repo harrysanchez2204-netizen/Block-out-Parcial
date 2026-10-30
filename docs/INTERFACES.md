@@ -1,4 +1,6 @@
-# Contrato entre módulos (E2)
+# Contrato entre módulos
+
+Acordado en E2 (PR #2) y ampliado en E4 (PR #7) y E8. El historial de cambios está en §10.
 
 Este documento es el **acuerdo técnico** del equipo. Todo lo que un módulo le entrega a otro está descrito
 aquí: sistemas de coordenadas, estructuras de datos, funciones públicas, qué pasa en los casos raros y quién
@@ -196,7 +198,7 @@ Solo estas funciones se llaman desde otro módulo. Lo que empieza con `_` es pri
 
 | Función | Entrada | Salida | Errores |
 | --- | --- | --- | --- |
-| `create_scene(config: dict \| None = None) -> Scene` | `config` con claves opcionales `size` y `pieces` | `Scene` inicial válida | Si `config` es `None` usa los valores por defecto. **Determinista:** el mismo `config` da exactamente la misma escena (sin `random`, sin reloj). |
+| `create_scene(config: dict \| None = None) -> Scene` | `config` con claves opcionales `size` y `pieces` | `Scene` inicial válida | Si `config` es `None` usa los valores por defecto. **Determinista:** el mismo `config` da exactamente la misma escena (sin `random`, sin reloj). Lanza `ValueError` si una pieza no está en el catálogo o si las piezas no caben en el contenedor: es un error de configuración y se detecta al arrancar. |
 | `apply_action(scene: Scene, action: Action) -> Scene` | escena y acción | **escena nueva** (la de entrada no se modifica) | Nunca lanza excepción: una acción inválida (índice fuera de rango, `kind` desconocido, `select` sin pieza) **devuelve la escena sin cambios**. |
 | `get_geometry(scene: Scene) -> Geometry3D` | escena | geometría en coordenadas del **mundo** | Función pura: no modifica la escena. |
 | `model_matrix(piece: Piece) -> (4,4)` | pieza | `M` local → mundo | — |
@@ -213,9 +215,10 @@ Solo estas funciones se llaman desde otro módulo. Lo que empieza con `_` es pri
 | `look_at(eye, target, up=(0,0,1)) -> (R, t)` | puntos del mundo | extrínsecos | Falla si la dirección de vista es paralela a `up`: por eso la elevación de la cámara se limita a ±89°. |
 | `build_camera(eye, target, width, height, fov_deg=50, near=0.1) -> Camera` | — | `Camera` | — |
 | `project_points(cam, pts_world) -> (uv, z, visible)` | `pts_world (N,3)` | `uv (N,2)`, `z (N,)`, `visible (N,) bool` | Los puntos con `z ≤ near` se marcan `visible = False` y su `uv` es `NaN`: **jamás se divide por ~0**. |
-| `project(geometry, cam, fill_faces=False) -> DrawPrimitives2D` | geometría del mundo | primitivas 2D | Recorta aristas contra el plano cercano; descarta las que quedan completamente detrás. |
+| `project(geometry, cam, fill_faces=False) -> DrawPrimitives2D` | geometría del mundo | primitivas 2D | Recorta aristas contra el plano cercano; descarta las que quedan completamente detrás. Con `fill_faces=True` también entrega caras: descarta las traseras, las recorta y las ordena de lejos a cerca (pintor). |
+| `clip_polygon_near(poly_cam, near) -> (m,3)` | polígono en coords de **cámara** | polígono recortado a `z ≥ near`, o `(0,3)` | Sutherland–Hodgman contra un plano. Menos de 3 vértices = vacío. |
 | `clip_segment_near(a, b, near)` | extremos en coords de **cámara** | `(a', b')` o `None` | `None` = el segmento está completamente detrás. |
-| `OrbitCamera` | estado `target, azimuth, elevation, distance, fov` | `.build(w, h) -> Camera` | `elevation` se limita a ±89°, `distance` a `[2, 80]`, `fov` a `[15, 120]`. `.reset()` vuelve al estado inicial. |
+| `OrbitCamera` | estado `target, azimuth, elevation, distance, fov` | `.build(w, h) -> Camera` | `elevation` se limita a ±89°, `distance` a `[2, 80]`, `fov` a `[15, 120]`. `.reset()` vuelve al estado inicial. Entradas no finitas (NaN, inf) o `zoom` con factor ≤ 0 se **ignoran**: la cámara nunca queda en un estado inválido. |
 
 `OrbitCamera` tiene además `.orbit(d_az, d_el)`, `.zoom(factor)`, `.set_fov(fov)` y la propiedad `.eye`:
 
@@ -223,14 +226,23 @@ Solo estas funciones se llaman desde otro módulo. Lo que empieza con `_` es pri
 eye = target + distance · (cos(el)·cos(az),  cos(el)·sin(az),  sin(el))
 ```
 
+Homografía, en `blockout.projection.homography` (la usan `experiments/` y las pruebas; ver `docs/INFORME.md` §2):
+
+| Función | Entrada | Salida | Errores |
+| --- | --- | --- | --- |
+| `plane_to_image_homography(cam, origin, e1, e2) -> (3,3)` | cámara y plano `X = origin + a·e1 + b·e2` | `H` de `(a, b, 1)` a píxeles; para el piso, `K[r1 \| r2 \| t]` | — |
+| `homography_between_views(cam1, cam2, origin, e1, e2) -> (3,3)` | dos cámaras y un plano | `H21 = H2·H1⁻¹`, con `H21[2,2] = 1` | `ValueError` si una cámara está sobre el plano (su `H` es singular). |
+| `estimate_homography_dlt(src, dst) -> (3,3)` | `≥ 4` pares de píxeles `(N,2)` | `H` estimada por DLT normalizado | `ValueError` con menos de 4 puntos o con 3 colineales. |
+| `reprojection_errors(H, src, dst) -> (N,)` | `H` y pares de píxeles | distancia en píxeles punto por punto | — |
+
 ### 3.3 Módulo C — `blockout.app`
 
 | Función | Entrada | Salida |
 | --- | --- | --- |
 | `run(demo=False, size=(1000,700), max_frames=None)` | banderas | abre la ventana y corre el bucle |
 | `render_frame(surface, font, prim, hud_lines)` | `DrawPrimitives2D` | dibuja en la superficie |
-| `VictoryAnimation(scene).step(dt) -> list[Action]` | `dt` en segundos | acciones `set_pose` |
-| `DemoRunner().tick() -> list[(frame, kind, data)]` | — | eventos del guion del fotograma actual |
+| `VictoryAnimation(scene).step(dt) -> list[Action]` | `dt` en segundos | `set_status("victory")` en el primer paso; un `set_pose` por pieza en cada paso; al terminar, las poses originales exactas y `set_status("playing")`. Después, `finished` es `True` y devuelve `[]` |
+| `DemoRunner().tick() -> list[(frame, kind, data)]` | — | eventos del guion del fotograma actual, y avanza un fotograma. `kind`: `action` (`Action`), `camera` o `app` (orden de la interfaz), `victory`. `finished` al acabar el guion |
 
 ---
 
@@ -301,7 +313,12 @@ teclado / ratón / guion de la demo        (C)
 | `set_pose` | **Sin límites** de contenedor (la animación puede sacar las piezas). Exige rotación `(3,3)` y posición `(3,)` finitas; la rotación se limpia igual que en `rotate`. |
 | Piezas que se cruzan entre sí | No se detecta: las colisiones entre piezas son opcionales (R34). |
 | Elevación de la cámara en ±90° | Se limita a ±89° para que `look_at` no sea degenerado. |
-| Coordenadas de píxel enormes (extremo casi en el plano de la cámara) | La interfaz descarta segmentos con coordenadas > 1e5 en vez de dibujar basura. |
+| Coordenadas de píxel enormes (extremo casi en el plano de la cámara) | La interfaz descarta segmentos y caras con coordenadas > 1e5 o no finitas en vez de dibujar basura. |
+| Dibujo con caras rellenas | La interfaz dibuja caras y aristas en **una sola lista** ordenada de lejos a cerca; a igual profundidad, primero la cara. |
+| Acción de pieza durante la animación de victoria | Se ignora y el HUD lo avisa: la animación fija todas las poses en cada fotograma y al terminar restaura las del principio. La cámara sigue respondiendo. |
+| Tiempo de la animación y de la demo | Avanza `1/60` s **por fotograma**, no según el reloj real: el mismo número de fotogramas da siempre las mismas poses. |
+| Entrada durante la demo | Se ignoran el ratón y el teclado salvo salir, ayuda, caras y `Enter` (repetir). |
+| `translate` o `rotate` rechazado desde el teclado | No es un error: la interfaz lo detecta porque `apply_action` devuelve **el mismo objeto** (`nuevo is anterior`) y muestra un aviso en el HUD. |
 
 ---
 
@@ -392,3 +409,14 @@ giro de 90° alrededor de `Z`.
 
 Cambios que **no** necesitan tocar este documento: detalles internos de un módulo, nombres de funciones
 privadas, pruebas, colores, mensajes del HUD.
+
+---
+
+## 10. Historial de cambios del contrato
+
+| Versión | PR | Qué cambió |
+| --- | --- | --- |
+| E2 | #2 | Acuerdo inicial: coordenadas, estructuras, funciones públicas, casos límite y ejemplo compartido. |
+| E4 | #7 | `rot_axis_angle` y `occupied_cells` (§3.1); límites del contenedor, `translate` entero, `set_pose` sin límites, rotaciones limpiadas y piezas cruzadas (§6). |
+| E8 | _completar_ | Revisión contra el código del prototipo: errores de `create_scene`, `clip_polygon_near`, caras en `project`, entradas inválidas de `OrbitCamera`, funciones de homografía, E9 marcado como pendiente y tres casos de dibujo en §6. **Ningún tipo ni firma existente cambia.** |
+| E9 | _completar_ | `VictoryAnimation` y `DemoRunner` implementados (§3.3, ya no pendientes) y tres casos nuevos en §6 (acciones durante la victoria, tiempo por fotograma, entrada en la demo). |
