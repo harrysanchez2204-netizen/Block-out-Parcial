@@ -2,7 +2,7 @@
 
 Completar con las fechas reales de entrega del curso. Las semanas son relativas al inicio del proyecto.
 
-| Hito | Etapas | Semana propuesta | Fecha prevista | Fecha real | Revisión / integración |
+| Hito | Etapas | Dia propuesto | Fecha prevista | Fecha real | Revisión / integración |
 | --- | --- | --- | --- | --- | --- |
 | H1 Diseño y contratos | E1, E2 | 1 | _completar_ | 2026-10-28 (PR #2, `26cd9f2`) | Contrato fusionado sin las tres aprobaciones |
 | H2 Primera integración | E3 | 2 | _completar_ | 2026-10-28 (PR #4, `6dce4e5`) | 60 pruebas; integración A→B→C verificada contra el ejemplo compartido |
