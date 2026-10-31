@@ -1,9 +1,9 @@
-# Seguimiento semanal
+# Seguimiento 
 
 Una entrada por semana (como mínimo): fechas reales, bloqueos, decisiones y ajustes de cronograma, con
 enlaces a commits y PR.
 
-## Semana 1 — desde 2026-10-27
+## Dia 1-4 — desde 2026-10-27
 
 - **Hecho:** esqueleto del repositorio, CI en Linux y Windows (T01) — PR #1 fusionado.
 - **Hecho:** contrato entre módulos (T02, T03) — `docs/INTERFACES.md`, `src/blockout/core/types.py`,
